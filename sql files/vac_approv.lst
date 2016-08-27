@@ -1,0 +1,2566 @@
+60-SQL>
+60-SQL>-- ******************************************************
+60-SQL>--    DROP TABLES
+60-SQL>-- ******************************************************
+60-SQL>
+60-SQL>DROP table tbemp_day_req purge;
+
+Table dropped.
+
+60-SQL>DROP table tbemp purge;
+
+Table dropped.
+
+60-SQL>DROP table tbdept_shift purge;
+
+Table dropped.
+
+60-SQL>DROP table tbday_req purge;
+
+Table dropped.
+
+60-SQL>DROP table tbemp_type purge;
+
+Table dropped.
+
+60-SQL>DROP table tbshift purge;
+
+Table dropped.
+
+60-SQL>DROP table tbdept purge;
+
+Table dropped.
+
+60-SQL>DROP table tbday_type purge;
+
+Table dropped.
+
+60-SQL>
+60-SQL>
+60-SQL>-- ******************************************************
+60-SQL>--    CREATE TABLES
+60-SQL>-- ******************************************************
+60-SQL>
+60-SQL>CREATE table tbday_type (
+  2  	 day_type_id  char(2)				     not null
+  3  	     constraint pk_day_type primary key,
+  4  	 day_type     varchar2(15)			     not null
+  5  );
+
+Table created.
+
+60-SQL>
+60-SQL>
+60-SQL>CREATE table tbdept (
+  2  	 dept_id	varchar2(10)			     not null
+  3  	     constraint pk_dept primary key,
+  4  	 dept		varchar2(30)			     not null
+  5  );
+
+Table created.
+
+60-SQL>
+60-SQL>
+60-SQL>CREATE table tbshift (
+  2  	 shift_id	char(1) 			     not null
+  3  	     constraint pk_shift primary key,
+  4  	 shift		varchar2(20)			     not null
+  5  );
+
+Table created.
+
+60-SQL>
+60-SQL>
+60-SQL>CREATE table tbemp_type (
+  2  	 emp_type_id  varchar2(5)			not null
+  3  	     constraint pk_emp_type primary key,
+  4  	 emp_type     varchar2(15)			not null
+  5  );
+
+Table created.
+
+60-SQL>
+60-SQL>CREATE table tbday_req (
+  2  	 day_req  date					     not null
+  3  	     constraint pk_day_req primary key,
+  4  	 day_type_id  char(2)				     not null
+  5  	     constraint fk_day_type_id_tbday_req references tbday_type (day_type_id)
+  6  );
+
+Table created.
+
+60-SQL>
+60-SQL>CREATE table tbdept_shift (
+  2  	 dept_id	varchar2(10)			     not null
+  3  	     constraint fk_dept_id_tbdept_shift references tbdept (dept_id),
+  4  	 shift_id	char(1) 			     not null
+  5  	     constraint fk_shift_id_tbdept_shift references tbshift (shift_id),
+  6  	 num_emp_out	number(4,0)	    default 1	     not null,
+  7  	     constraint pk_dept_shift primary key (dept_id, shift_id)
+  8  );
+
+Table created.
+
+60-SQL>
+60-SQL>
+60-SQL>CREATE table tbemp(
+  2  	 num_los	number(4,0)			     not null
+  3  	     constraint pk_emp primary key,
+  4  	 dept_id	varchar2(10)			     not null
+  5  	     constraint fk_dept_id_tbemp references tbdept (dept_id),
+  6  	 shift_id	char(1) 			     not null
+  7  	     constraint fk_shift_id_tbemp references tbshift (shift_id),
+  8  	 emp_type_id	varchar2(5)			     not null
+  9  	     constraint fk_emp_type_tbemp references tbemp_type (emp_type_id),
+ 10  	 first_name	varchar2(50)			     not null,
+ 11  	 last_name	varchar2(50)			     not null,
+ 12  	 num_vac_days	number(4,0)			     not null,
+ 13  	 email		varchar2(50)			     not null,
+ 14  	 password	varchar2(20)			     not null
+ 15  );
+
+Table created.
+
+60-SQL>
+60-SQL>CREATE table tbemp_day_req (
+  2  	 num_los	number(4,0)			    not null
+  3  	     constraint fk_num_los_tbemp_day_req references tbemp (num_los) on delete cascade,
+  4  	 day_req  date					     not null
+  5  	     constraint fk_day_req_tbemp_day_req references tbday_req (day_req),
+  6  	     constraint pk_emp_day_req primary key (num_los, day_req)
+  7  );
+
+Table created.
+
+60-SQL>
+60-SQL>
+60-SQL>-- ******************************************************
+60-SQL>--    POPULATE TABLES
+60-SQL>-- ******************************************************
+60-SQL>
+60-SQL>/* tbday_type */
+60-SQL>
+60-SQL>INSERT into tbday_type values ('WD', 'Work Day');
+
+1 row created.
+
+60-SQL>INSERT into tbday_type values ('WE', 'Weekend');
+
+1 row created.
+
+60-SQL>INSERT into tbday_type values ('HD', 'Holiday');
+
+1 row created.
+
+60-SQL>
+60-SQL>/*  tbdept */
+60-SQL>
+60-SQL>INSERT into tbdept values ('ADMIN', 'Administration');
+
+1 row created.
+
+60-SQL>INSERT into tbdept values ('HR', 'Human Resources');
+
+1 row created.
+
+60-SQL>INSERT into tbdept values ('IT', 'Information Technology');
+
+1 row created.
+
+60-SQL>INSERT into tbdept values ('PCK', 'Picking');
+
+1 row created.
+
+60-SQL>INSERT into tbdept values ('REC', 'Receiving');
+
+1 row created.
+
+60-SQL>INSERT into tbdept values ('SHP', 'Shipping');
+
+1 row created.
+
+60-SQL>INSERT into tbdept values ('STK', 'Stocking');
+
+1 row created.
+
+60-SQL>
+60-SQL>/* tbshift */
+60-SQL>
+60-SQL>INSERT into tbshift values ('1', 'First');
+
+1 row created.
+
+60-SQL>INSERT into tbshift values ('2', 'Second');
+
+1 row created.
+
+60-SQL>INSERT into tbshift values ('3', 'Third');
+
+1 row created.
+
+60-SQL>
+60-SQL>/* tbemp_type */
+60-SQL>
+60-SQL>INSERT into tbemp_type values ('EMP', 'Employee');
+
+1 row created.
+
+60-SQL>INSERT into tbemp_type values ('HR', 'Human Resources');
+
+1 row created.
+
+60-SQL>INSERT into tbemp_type values ('MGR', 'Manager');
+
+1 row created.
+
+60-SQL>
+60-SQL>/* tbday_req */
+60-SQL>
+60-SQL>INSERT into tbday_req values ( '01-JAN-2015', 'HD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '02-JAN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '03-JAN-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '04-JAN-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '05-JAN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '06-JAN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '07-JAN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '08-JAN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '09-JAN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '10-JAN-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '11-JAN-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '12-JAN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '13-JAN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '14-JAN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '15-JAN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '16-JAN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '17-JAN-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '18-JAN-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '19-JAN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '20-JAN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '21-JAN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '22-JAN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '23-JAN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '24-JAN-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '25-JAN-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '26-JAN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '27-JAN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '28-JAN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '29-JAN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '30-JAN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '31-JAN-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '01-FEB-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '02-FEB-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '03-FEB-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '04-FEB-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '05-FEB-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '06-FEB-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '07-FEB-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '08-FEB-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '09-FEB-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '10-FEB-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '11-FEB-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '12-FEB-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '13-FEB-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '14-FEB-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '15-FEB-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '16-FEB-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '17-FEB-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '18-FEB-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '19-FEB-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '20-FEB-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '21-FEB-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '22-FEB-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '23-FEB-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '24-FEB-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '25-FEB-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '26-FEB-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '27-FEB-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '28-FEB-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '01-MAR-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '02-MAR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '03-MAR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '04-MAR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '05-MAR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '06-MAR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '07-MAR-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '08-MAR-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '09-MAR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '10-MAR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '11-MAR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '12-MAR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '13-MAR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '14-MAR-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '15-MAR-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '16-MAR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '17-MAR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '18-MAR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '19-MAR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '20-MAR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '21-MAR-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '22-MAR-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '23-MAR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '24-MAR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '25-MAR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '26-MAR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '27-MAR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '28-MAR-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '29-MAR-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '30-MAR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '31-MAR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '01-APR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '02-APR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '03-APR-2015', 'HD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '04-APR-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '05-APR-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '06-APR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '07-APR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '08-APR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '09-APR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '10-APR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '11-APR-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '12-APR-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '13-APR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '14-APR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '15-APR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '16-APR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '17-APR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '18-APR-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '19-APR-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '20-APR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '21-APR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '22-APR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '23-APR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '24-APR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '25-APR-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '26-APR-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '27-APR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '28-APR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '29-APR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '30-APR-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '01-MAY-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '02-MAY-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '03-MAY-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '04-MAY-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '05-MAY-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '06-MAY-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '07-MAY-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '08-MAY-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '09-MAY-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '10-MAY-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '11-MAY-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '12-MAY-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '13-MAY-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '14-MAY-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '15-MAY-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '16-MAY-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '17-MAY-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '18-MAY-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '19-MAY-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '20-MAY-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '21-MAY-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '22-MAY-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '23-MAY-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '24-MAY-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '25-MAY-2015', 'HD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '26-MAY-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '27-MAY-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '28-MAY-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '29-MAY-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '30-MAY-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '31-MAY-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '01-JUN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '02-JUN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '03-JUN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '04-JUN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '05-JUN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '06-JUN-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '07-JUN-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '08-JUN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '09-JUN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '10-JUN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '11-JUN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '12-JUN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '13-JUN-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '14-JUN-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '15-JUN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '16-JUN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '17-JUN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '18-JUN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '19-JUN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '20-JUN-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '21-JUN-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '22-JUN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '23-JUN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '24-JUN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '25-JUN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '26-JUN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '27-JUN-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '28-JUN-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '29-JUN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '30-JUN-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '01-JUL-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '02-JUL-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '03-JUL-2015', 'HD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '04-JUL-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '05-JUL-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '06-JUL-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '07-JUL-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '08-JUL-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '09-JUL-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '10-JUL-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '11-JUL-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '12-JUL-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '13-JUL-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '14-JUL-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '15-JUL-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '16-JUL-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '17-JUL-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '18-JUL-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '19-JUL-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '20-JUL-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '21-JUL-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '22-JUL-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '23-JUL-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '24-JUL-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '25-JUL-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '26-JUL-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '27-JUL-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '28-JUL-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '29-JUL-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '30-JUL-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '31-JUL-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '01-AUG-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '02-AUG-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '03-AUG-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '04-AUG-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '05-AUG-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '06-AUG-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '07-AUG-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '08-AUG-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '09-AUG-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '10-AUG-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '11-AUG-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '12-AUG-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '13-AUG-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '14-AUG-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '15-AUG-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '16-AUG-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '17-AUG-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '18-AUG-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '19-AUG-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '20-AUG-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '21-AUG-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '22-AUG-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '23-AUG-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '24-AUG-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '25-AUG-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '26-AUG-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '27-AUG-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '28-AUG-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '29-AUG-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '30-AUG-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '31-AUG-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '01-SEP-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '02-SEP-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '03-SEP-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '04-SEP-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '05-SEP-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '06-SEP-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '07-SEP-2015', 'HD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '08-SEP-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '09-SEP-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '10-SEP-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '11-SEP-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '12-SEP-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '13-SEP-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '14-SEP-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '15-SEP-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '16-SEP-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '17-SEP-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '18-SEP-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '19-SEP-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '20-SEP-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '21-SEP-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '22-SEP-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '23-SEP-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '24-SEP-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '25-SEP-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '26-SEP-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '27-SEP-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '28-SEP-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '29-SEP-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '30-SEP-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '01-OCT-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '02-OCT-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '03-OCT-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '04-OCT-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '05-OCT-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '06-OCT-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '07-OCT-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '08-OCT-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '09-OCT-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '10-OCT-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '11-OCT-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '12-OCT-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '13-OCT-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '14-OCT-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '15-OCT-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '16-OCT-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '17-OCT-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '18-OCT-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '19-OCT-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '20-OCT-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '21-OCT-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '22-OCT-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '23-OCT-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '24-OCT-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '25-OCT-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '26-OCT-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '27-OCT-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '28-OCT-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '29-OCT-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '30-OCT-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '31-OCT-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '01-NOV-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '02-NOV-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '03-NOV-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '04-NOV-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '05-NOV-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '06-NOV-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '07-NOV-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '08-NOV-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '09-NOV-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '10-NOV-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '11-NOV-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '12-NOV-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '13-NOV-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '14-NOV-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '15-NOV-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '16-NOV-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '17-NOV-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '18-NOV-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '19-NOV-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '20-NOV-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '21-NOV-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '22-NOV-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '23-NOV-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '24-NOV-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '25-NOV-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '26-NOV-2015', 'HD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '27-NOV-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '28-NOV-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '29-NOV-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '30-NOV-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '01-DEC-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '02-DEC-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '03-DEC-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '04-DEC-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '05-DEC-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '06-DEC-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '07-DEC-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '08-DEC-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '09-DEC-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '10-DEC-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '11-DEC-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '12-DEC-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '13-DEC-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '14-DEC-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '15-DEC-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '16-DEC-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '17-DEC-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '18-DEC-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '19-DEC-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '20-DEC-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '21-DEC-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '22-DEC-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '23-DEC-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '24-DEC-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '25-DEC-2015', 'HD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '26-DEC-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '27-DEC-2015', 'WE');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '28-DEC-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '29-DEC-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '30-DEC-2015', 'WD');
+
+1 row created.
+
+60-SQL>INSERT into tbday_req values ( '31-DEC-2015', 'WD');
+
+1 row created.
+
+60-SQL>
+60-SQL>/* tbdept_shift */
+60-SQL>
+60-SQL>INSERT into tbdept_shift values ( 'ADMIN', '1', 1);
+
+1 row created.
+
+60-SQL>INSERT into tbdept_shift values ( 'ADMIN', '2', 1);
+
+1 row created.
+
+60-SQL>INSERT into tbdept_shift values ( 'ADMIN', '3', 1);
+
+1 row created.
+
+60-SQL>INSERT into tbdept_shift values ( 'HR', '1', 1);
+
+1 row created.
+
+60-SQL>INSERT into tbdept_shift values ( 'HR', '2', 1);
+
+1 row created.
+
+60-SQL>INSERT into tbdept_shift values ( 'HR', '3', 1);
+
+1 row created.
+
+60-SQL>INSERT into tbdept_shift values ( 'IT', '1', 1);
+
+1 row created.
+
+60-SQL>INSERT into tbdept_shift values ( 'IT', '2', 1);
+
+1 row created.
+
+60-SQL>INSERT into tbdept_shift values ( 'IT', '3', 1);
+
+1 row created.
+
+60-SQL>INSERT into tbdept_shift values ( 'PCK', '1', 2);
+
+1 row created.
+
+60-SQL>INSERT into tbdept_shift values ( 'PCK', '2', 4);
+
+1 row created.
+
+60-SQL>INSERT into tbdept_shift values ( 'PCK', '3', 2);
+
+1 row created.
+
+60-SQL>INSERT into tbdept_shift values ( 'REC', '1', 4);
+
+1 row created.
+
+60-SQL>INSERT into tbdept_shift values ( 'REC', '2', 2);
+
+1 row created.
+
+60-SQL>INSERT into tbdept_shift values ( 'REC', '3', 1);
+
+1 row created.
+
+60-SQL>INSERT into tbdept_shift values ( 'SHP', '1', 3);
+
+1 row created.
+
+60-SQL>INSERT into tbdept_shift values ( 'SHP', '2', 2);
+
+1 row created.
+
+60-SQL>INSERT into tbdept_shift values ( 'SHP', '3', 1);
+
+1 row created.
+
+60-SQL>INSERT into tbdept_shift values ( 'STK', '1', 5);
+
+1 row created.
+
+60-SQL>INSERT into tbdept_shift values ( 'STK', '2', 3);
+
+1 row created.
+
+60-SQL>INSERT into tbdept_shift values ( 'STK', '3', 2);
+
+1 row created.
+
+60-SQL>
+60-SQL>/* tbemp */
+60-SQL>
+60-SQL>INSERT into tbemp values ( 11, 'PCK', '1','EMP','John','Smith',20,'jsmith@pharmchain.com','jsmith1');
+
+1 row created.
+
+60-SQL>INSERT into tbemp values ( 20, 'REC', '3','EMP','Mary','Willliams',15,'mwilliams@pharmchain.com','mwilliams1');
+
+1 row created.
+
+60-SQL>INSERT into tbemp values ( 31, 'IT', '1','EMP','Jane','Jones',5,'jjones@pharmchain.com','jjones1');
+
+1 row created.
+
+60-SQL>INSERT into tbemp values ( 42, 'PCK', '1','MGR','Miranda','Tyler',10,'mtyler@pharmchain.com','mtyler1');
+
+1 row created.
+
+60-SQL>INSERT into tbemp values ( 56, 'HR', '1','HR','Steven','Johnson',20,'sjohnson@pharmchain.com','sjohnson1');
+
+1 row created.
+
+60-SQL>INSERT into tbemp values ( 64, 'PCK', '1','EMP','Lisa','Hennessy',20,'lhennessy@pharmchain.com','lhennessy1');
+
+1 row created.
+
+60-SQL>INSERT into tbemp values ( 79, 'PCK', '1','EMP','Anthony','Dwyer',10,'adwyer@pharmchain.com','adwyer1');
+
+1 row created.
+
+60-SQL>INSERT into tbemp values ( 106, 'PCK', '1','EMP','Corie','McHugh',15,'cmchugh@pharmchain.com','cmchugh1');
+
+1 row created.
+
+60-SQL>
+60-SQL>/* tbemp_day_req */
+60-SQL>
+60-SQL>INSERT into tbemp_day_req values (11,'12-JAN-2015');
+
+1 row created.
+
+60-SQL>INSERT into tbemp_day_req values (11,'13-JAN-2015');
+
+1 row created.
+
+60-SQL>INSERT into tbemp_day_req values (11,'14-JAN-2015');
+
+1 row created.
+
+60-SQL>INSERT into tbemp_day_req values (11,'15-JAN-2015');
+
+1 row created.
+
+60-SQL>INSERT into tbemp_day_req values (11,'16-JAN-2015');
+
+1 row created.
+
+60-SQL>INSERT into tbemp_day_req values (20,'12-JAN-2015');
+
+1 row created.
+
+60-SQL>INSERT into tbemp_day_req values (20,'13-JAN-2015');
+
+1 row created.
+
+60-SQL>INSERT into tbemp_day_req values (20,'14-JAN-2015');
+
+1 row created.
+
+60-SQL>INSERT into tbemp_day_req values (20,'15-JAN-2015');
+
+1 row created.
+
+60-SQL>INSERT into tbemp_day_req values (20,'16-JAN-2015');
+
+1 row created.
+
+60-SQL>INSERT into tbemp_day_req values (31,'19-JAN-2015');
+
+1 row created.
+
+60-SQL>INSERT into tbemp_day_req values (31,'20-JAN-2015');
+
+1 row created.
+
+60-SQL>INSERT into tbemp_day_req values (31,'21-JAN-2015');
+
+1 row created.
+
+60-SQL>INSERT into tbemp_day_req values (31,'22-JAN-2015');
+
+1 row created.
+
+60-SQL>INSERT into tbemp_day_req values (31,'23-JAN-2015');
+
+1 row created.
+
+60-SQL>INSERT into tbemp_day_req values (42,'16-FEB-2015');
+
+1 row created.
+
+60-SQL>INSERT into tbemp_day_req values (42,'17-FEB-2015');
+
+1 row created.
+
+60-SQL>INSERT into tbemp_day_req values (42,'18-FEB-2015');
+
+1 row created.
+
+60-SQL>INSERT into tbemp_day_req values (42,'19-FEB-2015');
+
+1 row created.
+
+60-SQL>INSERT into tbemp_day_req values (42,'20-FEB-2015');
+
+1 row created.
+
+60-SQL>INSERT into tbemp_day_req values (56,'22-MAY-2015');
+
+1 row created.
+
+60-SQL>INSERT into tbemp_day_req values (56,'26-MAY-2015');
+
+1 row created.
+
+60-SQL>INSERT into tbemp_day_req values (56,'27-MAY-2015');
+
+1 row created.
+
+60-SQL>INSERT into tbemp_day_req values (56,'28-MAY-2015');
+
+1 row created.
+
+60-SQL>INSERT into tbemp_day_req values (56,'29-MAY-2015');
+
+1 row created.
+
+60-SQL>
+60-SQL>
+60-SQL>-- ******************************************************
+60-SQL>--    VIEW TABLES
+60-SQL>-- ******************************************************
+60-SQL>
+60-SQL>SELECT * FROM tbday_type;
+
+DA DAY_TYPE                                                                     
+-- ---------------                                                              
+WD Work Day                                                                     
+WE Weekend                                                                      
+HD Holiday                                                                      
+
+60-SQL>SELECT * FROM tbdept;
+
+DEPT_ID    DEPT                                                                 
+---------- ------------------------------                                       
+ADMIN      Administration                                                       
+HR         Human Resources                                                      
+IT         Information Technology                                               
+PCK        Picking                                                              
+REC        Receiving                                                            
+SHP        Shipping                                                             
+STK        Stocking                                                             
+
+7 rows selected.
+
+60-SQL>SELECT * FROM tbshift;
+
+S SHIFT                                                                         
+- --------------------                                                          
+1 First                                                                         
+2 Second                                                                        
+3 Third                                                                         
+
+60-SQL>SELECT * FROM tbemp_type;
+
+EMP_T EMP_TYPE                                                                  
+----- ---------------                                                           
+EMP   Employee                                                                  
+HR    Human Resources                                                           
+MGR   Manager                                                                   
+
+60-SQL>SELECT * FROM tbday_req;
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+01-JAN-15 HD                                                                    
+02-JAN-15 WD                                                                    
+03-JAN-15 WE                                                                    
+04-JAN-15 WE                                                                    
+05-JAN-15 WD                                                                    
+06-JAN-15 WD                                                                    
+07-JAN-15 WD                                                                    
+08-JAN-15 WD                                                                    
+09-JAN-15 WD                                                                    
+10-JAN-15 WE                                                                    
+11-JAN-15 WE                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+12-JAN-15 WD                                                                    
+13-JAN-15 WD                                                                    
+14-JAN-15 WD                                                                    
+15-JAN-15 WD                                                                    
+16-JAN-15 WD                                                                    
+17-JAN-15 WE                                                                    
+18-JAN-15 WE                                                                    
+19-JAN-15 WD                                                                    
+20-JAN-15 WD                                                                    
+21-JAN-15 WD                                                                    
+22-JAN-15 WD                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+23-JAN-15 WD                                                                    
+24-JAN-15 WE                                                                    
+25-JAN-15 WE                                                                    
+26-JAN-15 WD                                                                    
+27-JAN-15 WD                                                                    
+28-JAN-15 WD                                                                    
+29-JAN-15 WD                                                                    
+30-JAN-15 WD                                                                    
+31-JAN-15 WE                                                                    
+01-FEB-15 WE                                                                    
+02-FEB-15 WD                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+03-FEB-15 WD                                                                    
+04-FEB-15 WD                                                                    
+05-FEB-15 WD                                                                    
+06-FEB-15 WD                                                                    
+07-FEB-15 WE                                                                    
+08-FEB-15 WE                                                                    
+09-FEB-15 WD                                                                    
+10-FEB-15 WD                                                                    
+11-FEB-15 WD                                                                    
+12-FEB-15 WD                                                                    
+13-FEB-15 WD                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+14-FEB-15 WE                                                                    
+15-FEB-15 WE                                                                    
+16-FEB-15 WD                                                                    
+17-FEB-15 WD                                                                    
+18-FEB-15 WD                                                                    
+19-FEB-15 WD                                                                    
+20-FEB-15 WD                                                                    
+21-FEB-15 WE                                                                    
+22-FEB-15 WE                                                                    
+23-FEB-15 WD                                                                    
+24-FEB-15 WD                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+25-FEB-15 WD                                                                    
+26-FEB-15 WD                                                                    
+27-FEB-15 WD                                                                    
+28-FEB-15 WE                                                                    
+01-MAR-15 WE                                                                    
+02-MAR-15 WD                                                                    
+03-MAR-15 WD                                                                    
+04-MAR-15 WD                                                                    
+05-MAR-15 WD                                                                    
+06-MAR-15 WD                                                                    
+07-MAR-15 WE                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+08-MAR-15 WE                                                                    
+09-MAR-15 WD                                                                    
+10-MAR-15 WD                                                                    
+11-MAR-15 WD                                                                    
+12-MAR-15 WD                                                                    
+13-MAR-15 WD                                                                    
+14-MAR-15 WE                                                                    
+15-MAR-15 WE                                                                    
+16-MAR-15 WD                                                                    
+17-MAR-15 WD                                                                    
+18-MAR-15 WD                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+19-MAR-15 WD                                                                    
+20-MAR-15 WD                                                                    
+21-MAR-15 WE                                                                    
+22-MAR-15 WE                                                                    
+23-MAR-15 WD                                                                    
+24-MAR-15 WD                                                                    
+25-MAR-15 WD                                                                    
+26-MAR-15 WD                                                                    
+27-MAR-15 WD                                                                    
+28-MAR-15 WE                                                                    
+29-MAR-15 WE                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+30-MAR-15 WD                                                                    
+31-MAR-15 WD                                                                    
+01-APR-15 WD                                                                    
+02-APR-15 WD                                                                    
+03-APR-15 HD                                                                    
+04-APR-15 WE                                                                    
+05-APR-15 WE                                                                    
+06-APR-15 WD                                                                    
+07-APR-15 WD                                                                    
+08-APR-15 WD                                                                    
+09-APR-15 WD                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+10-APR-15 WD                                                                    
+11-APR-15 WE                                                                    
+12-APR-15 WE                                                                    
+13-APR-15 WD                                                                    
+14-APR-15 WD                                                                    
+15-APR-15 WD                                                                    
+16-APR-15 WD                                                                    
+17-APR-15 WD                                                                    
+18-APR-15 WE                                                                    
+19-APR-15 WE                                                                    
+20-APR-15 WD                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+21-APR-15 WD                                                                    
+22-APR-15 WD                                                                    
+23-APR-15 WD                                                                    
+24-APR-15 WD                                                                    
+25-APR-15 WE                                                                    
+26-APR-15 WE                                                                    
+27-APR-15 WD                                                                    
+28-APR-15 WD                                                                    
+29-APR-15 WD                                                                    
+30-APR-15 WD                                                                    
+01-MAY-15 WD                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+02-MAY-15 WE                                                                    
+03-MAY-15 WE                                                                    
+04-MAY-15 WD                                                                    
+05-MAY-15 WD                                                                    
+06-MAY-15 WD                                                                    
+07-MAY-15 WD                                                                    
+08-MAY-15 WD                                                                    
+09-MAY-15 WE                                                                    
+10-MAY-15 WE                                                                    
+11-MAY-15 WD                                                                    
+12-MAY-15 WD                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+13-MAY-15 WD                                                                    
+14-MAY-15 WD                                                                    
+15-MAY-15 WD                                                                    
+16-MAY-15 WE                                                                    
+17-MAY-15 WE                                                                    
+18-MAY-15 WD                                                                    
+19-MAY-15 WD                                                                    
+20-MAY-15 WD                                                                    
+21-MAY-15 WD                                                                    
+22-MAY-15 WD                                                                    
+23-MAY-15 WE                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+24-MAY-15 WE                                                                    
+25-MAY-15 HD                                                                    
+26-MAY-15 WD                                                                    
+27-MAY-15 WD                                                                    
+28-MAY-15 WD                                                                    
+29-MAY-15 WD                                                                    
+30-MAY-15 WE                                                                    
+31-MAY-15 WE                                                                    
+01-JUN-15 WD                                                                    
+02-JUN-15 WD                                                                    
+03-JUN-15 WD                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+04-JUN-15 WD                                                                    
+05-JUN-15 WD                                                                    
+06-JUN-15 WE                                                                    
+07-JUN-15 WE                                                                    
+08-JUN-15 WD                                                                    
+09-JUN-15 WD                                                                    
+10-JUN-15 WD                                                                    
+11-JUN-15 WD                                                                    
+12-JUN-15 WD                                                                    
+13-JUN-15 WE                                                                    
+14-JUN-15 WE                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+15-JUN-15 WD                                                                    
+16-JUN-15 WD                                                                    
+17-JUN-15 WD                                                                    
+18-JUN-15 WD                                                                    
+19-JUN-15 WD                                                                    
+20-JUN-15 WE                                                                    
+21-JUN-15 WE                                                                    
+22-JUN-15 WD                                                                    
+23-JUN-15 WD                                                                    
+24-JUN-15 WD                                                                    
+25-JUN-15 WD                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+26-JUN-15 WD                                                                    
+27-JUN-15 WE                                                                    
+28-JUN-15 WE                                                                    
+29-JUN-15 WD                                                                    
+30-JUN-15 WD                                                                    
+01-JUL-15 WD                                                                    
+02-JUL-15 WD                                                                    
+03-JUL-15 HD                                                                    
+04-JUL-15 WE                                                                    
+05-JUL-15 WE                                                                    
+06-JUL-15 WD                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+07-JUL-15 WD                                                                    
+08-JUL-15 WD                                                                    
+09-JUL-15 WD                                                                    
+10-JUL-15 WD                                                                    
+11-JUL-15 WE                                                                    
+12-JUL-15 WE                                                                    
+13-JUL-15 WD                                                                    
+14-JUL-15 WD                                                                    
+15-JUL-15 WD                                                                    
+16-JUL-15 WD                                                                    
+17-JUL-15 WD                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+18-JUL-15 WE                                                                    
+19-JUL-15 WE                                                                    
+20-JUL-15 WD                                                                    
+21-JUL-15 WD                                                                    
+22-JUL-15 WD                                                                    
+23-JUL-15 WD                                                                    
+24-JUL-15 WD                                                                    
+25-JUL-15 WE                                                                    
+26-JUL-15 WE                                                                    
+27-JUL-15 WD                                                                    
+28-JUL-15 WD                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+29-JUL-15 WD                                                                    
+30-JUL-15 WD                                                                    
+31-JUL-15 WD                                                                    
+01-AUG-15 WE                                                                    
+02-AUG-15 WE                                                                    
+03-AUG-15 WD                                                                    
+04-AUG-15 WD                                                                    
+05-AUG-15 WD                                                                    
+06-AUG-15 WD                                                                    
+07-AUG-15 WD                                                                    
+08-AUG-15 WE                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+09-AUG-15 WE                                                                    
+10-AUG-15 WD                                                                    
+11-AUG-15 WD                                                                    
+12-AUG-15 WD                                                                    
+13-AUG-15 WD                                                                    
+14-AUG-15 WD                                                                    
+15-AUG-15 WE                                                                    
+16-AUG-15 WE                                                                    
+17-AUG-15 WD                                                                    
+18-AUG-15 WD                                                                    
+19-AUG-15 WD                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+20-AUG-15 WD                                                                    
+21-AUG-15 WD                                                                    
+22-AUG-15 WE                                                                    
+23-AUG-15 WE                                                                    
+24-AUG-15 WD                                                                    
+25-AUG-15 WD                                                                    
+26-AUG-15 WD                                                                    
+27-AUG-15 WD                                                                    
+28-AUG-15 WD                                                                    
+29-AUG-15 WE                                                                    
+30-AUG-15 WE                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+31-AUG-15 WD                                                                    
+01-SEP-15 WD                                                                    
+02-SEP-15 WD                                                                    
+03-SEP-15 WD                                                                    
+04-SEP-15 WD                                                                    
+05-SEP-15 WE                                                                    
+06-SEP-15 WE                                                                    
+07-SEP-15 HD                                                                    
+08-SEP-15 WD                                                                    
+09-SEP-15 WD                                                                    
+10-SEP-15 WD                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+11-SEP-15 WD                                                                    
+12-SEP-15 WE                                                                    
+13-SEP-15 WE                                                                    
+14-SEP-15 WD                                                                    
+15-SEP-15 WD                                                                    
+16-SEP-15 WD                                                                    
+17-SEP-15 WD                                                                    
+18-SEP-15 WD                                                                    
+19-SEP-15 WE                                                                    
+20-SEP-15 WE                                                                    
+21-SEP-15 WD                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+22-SEP-15 WD                                                                    
+23-SEP-15 WD                                                                    
+24-SEP-15 WD                                                                    
+25-SEP-15 WD                                                                    
+26-SEP-15 WE                                                                    
+27-SEP-15 WE                                                                    
+28-SEP-15 WD                                                                    
+29-SEP-15 WD                                                                    
+30-SEP-15 WD                                                                    
+01-OCT-15 WD                                                                    
+02-OCT-15 WD                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+03-OCT-15 WE                                                                    
+04-OCT-15 WE                                                                    
+05-OCT-15 WD                                                                    
+06-OCT-15 WD                                                                    
+07-OCT-15 WD                                                                    
+08-OCT-15 WD                                                                    
+09-OCT-15 WD                                                                    
+10-OCT-15 WE                                                                    
+11-OCT-15 WE                                                                    
+12-OCT-15 WD                                                                    
+13-OCT-15 WD                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+14-OCT-15 WD                                                                    
+15-OCT-15 WD                                                                    
+16-OCT-15 WD                                                                    
+17-OCT-15 WE                                                                    
+18-OCT-15 WE                                                                    
+19-OCT-15 WD                                                                    
+20-OCT-15 WD                                                                    
+21-OCT-15 WD                                                                    
+22-OCT-15 WD                                                                    
+23-OCT-15 WD                                                                    
+24-OCT-15 WE                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+25-OCT-15 WE                                                                    
+26-OCT-15 WD                                                                    
+27-OCT-15 WD                                                                    
+28-OCT-15 WD                                                                    
+29-OCT-15 WD                                                                    
+30-OCT-15 WD                                                                    
+31-OCT-15 WE                                                                    
+01-NOV-15 WE                                                                    
+02-NOV-15 WD                                                                    
+03-NOV-15 WD                                                                    
+04-NOV-15 WD                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+05-NOV-15 WD                                                                    
+06-NOV-15 WD                                                                    
+07-NOV-15 WE                                                                    
+08-NOV-15 WE                                                                    
+09-NOV-15 WD                                                                    
+10-NOV-15 WD                                                                    
+11-NOV-15 WD                                                                    
+12-NOV-15 WD                                                                    
+13-NOV-15 WD                                                                    
+14-NOV-15 WE                                                                    
+15-NOV-15 WE                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+16-NOV-15 WD                                                                    
+17-NOV-15 WD                                                                    
+18-NOV-15 WD                                                                    
+19-NOV-15 WD                                                                    
+20-NOV-15 WD                                                                    
+21-NOV-15 WE                                                                    
+22-NOV-15 WE                                                                    
+23-NOV-15 WD                                                                    
+24-NOV-15 WD                                                                    
+25-NOV-15 WD                                                                    
+26-NOV-15 HD                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+27-NOV-15 WD                                                                    
+28-NOV-15 WE                                                                    
+29-NOV-15 WE                                                                    
+30-NOV-15 WD                                                                    
+01-DEC-15 WD                                                                    
+02-DEC-15 WD                                                                    
+03-DEC-15 WD                                                                    
+04-DEC-15 WD                                                                    
+05-DEC-15 WE                                                                    
+06-DEC-15 WE                                                                    
+07-DEC-15 WD                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+08-DEC-15 WD                                                                    
+09-DEC-15 WD                                                                    
+10-DEC-15 WD                                                                    
+11-DEC-15 WD                                                                    
+12-DEC-15 WE                                                                    
+13-DEC-15 WE                                                                    
+14-DEC-15 WD                                                                    
+15-DEC-15 WD                                                                    
+16-DEC-15 WD                                                                    
+17-DEC-15 WD                                                                    
+18-DEC-15 WD                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+19-DEC-15 WE                                                                    
+20-DEC-15 WE                                                                    
+21-DEC-15 WD                                                                    
+22-DEC-15 WD                                                                    
+23-DEC-15 WD                                                                    
+24-DEC-15 WD                                                                    
+25-DEC-15 HD                                                                    
+26-DEC-15 WE                                                                    
+27-DEC-15 WE                                                                    
+28-DEC-15 WD                                                                    
+29-DEC-15 WD                                                                    
+
+DAY_REQ   DA                                                                    
+--------- --                                                                    
+30-DEC-15 WD                                                                    
+31-DEC-15 WD                                                                    
+
+365 rows selected.
+
+60-SQL>SELECT * FROM tbdept_shift;
+
+DEPT_ID    S NUM_EMP_OUT                                                        
+---------- - -----------                                                        
+ADMIN      1           1                                                        
+ADMIN      2           1                                                        
+ADMIN      3           1                                                        
+HR         1           1                                                        
+HR         2           1                                                        
+HR         3           1                                                        
+IT         1           1                                                        
+IT         2           1                                                        
+IT         3           1                                                        
+PCK        1           2                                                        
+PCK        2           4                                                        
+
+DEPT_ID    S NUM_EMP_OUT                                                        
+---------- - -----------                                                        
+PCK        3           2                                                        
+REC        1           4                                                        
+REC        2           2                                                        
+REC        3           1                                                        
+SHP        1           3                                                        
+SHP        2           2                                                        
+SHP        3           1                                                        
+STK        1           5                                                        
+STK        2           3                                                        
+STK        3           2                                                        
+
+21 rows selected.
+
+60-SQL>SELECT * FROM tbemp;
+
+   NUM_LOS DEPT_ID    S EMP_T FIRST_NAME                                        
+---------- ---------- - ----- --------------------------------------------------
+LAST_NAME                                          NUM_VAC_DAYS                 
+-------------------------------------------------- ------------                 
+EMAIL                                              PASSWORD                     
+-------------------------------------------------- --------------------         
+        11 PCK        1 EMP   John                                              
+Smith                                                        20                 
+jsmith@pharmchain.com                              jsmith1                      
+                                                                                
+        20 REC        3 EMP   Mary                                              
+Willliams                                                    15                 
+mwilliams@pharmchain.com                           mwilliams1                   
+
+   NUM_LOS DEPT_ID    S EMP_T FIRST_NAME                                        
+---------- ---------- - ----- --------------------------------------------------
+LAST_NAME                                          NUM_VAC_DAYS                 
+-------------------------------------------------- ------------                 
+EMAIL                                              PASSWORD                     
+-------------------------------------------------- --------------------         
+                                                                                
+        31 IT         1 EMP   Jane                                              
+Jones                                                         5                 
+jjones@pharmchain.com                              jjones1                      
+                                                                                
+        42 PCK        1 MGR   Miranda                                           
+Tyler                                                        10                 
+
+   NUM_LOS DEPT_ID    S EMP_T FIRST_NAME                                        
+---------- ---------- - ----- --------------------------------------------------
+LAST_NAME                                          NUM_VAC_DAYS                 
+-------------------------------------------------- ------------                 
+EMAIL                                              PASSWORD                     
+-------------------------------------------------- --------------------         
+mtyler@pharmchain.com                              mtyler1                      
+                                                                                
+        56 HR         1 HR    Steven                                            
+Johnson                                                      20                 
+sjohnson@pharmchain.com                            sjohnson1                    
+                                                                                
+        64 PCK        1 EMP   Lisa                                              
+
+   NUM_LOS DEPT_ID    S EMP_T FIRST_NAME                                        
+---------- ---------- - ----- --------------------------------------------------
+LAST_NAME                                          NUM_VAC_DAYS                 
+-------------------------------------------------- ------------                 
+EMAIL                                              PASSWORD                     
+-------------------------------------------------- --------------------         
+Hennessy                                                     20                 
+lhennessy@pharmchain.com                           lhennessy1                   
+                                                                                
+        79 PCK        1 EMP   Anthony                                           
+Dwyer                                                        10                 
+adwyer@pharmchain.com                              adwyer1                      
+                                                                                
+
+   NUM_LOS DEPT_ID    S EMP_T FIRST_NAME                                        
+---------- ---------- - ----- --------------------------------------------------
+LAST_NAME                                          NUM_VAC_DAYS                 
+-------------------------------------------------- ------------                 
+EMAIL                                              PASSWORD                     
+-------------------------------------------------- --------------------         
+       106 PCK        1 EMP   Corie                                             
+McHugh                                                       15                 
+cmchugh@pharmchain.com                             cmchugh1                     
+                                                                                
+
+8 rows selected.
+
+60-SQL>SELECT * FROM tbemp_day_req;
+
+   NUM_LOS DAY_REQ                                                              
+---------- ---------                                                            
+        11 12-JAN-15                                                            
+        11 13-JAN-15                                                            
+        11 14-JAN-15                                                            
+        11 15-JAN-15                                                            
+        11 16-JAN-15                                                            
+        20 12-JAN-15                                                            
+        20 13-JAN-15                                                            
+        20 14-JAN-15                                                            
+        20 15-JAN-15                                                            
+        20 16-JAN-15                                                            
+        31 19-JAN-15                                                            
+
+   NUM_LOS DAY_REQ                                                              
+---------- ---------                                                            
+        31 20-JAN-15                                                            
+        31 21-JAN-15                                                            
+        31 22-JAN-15                                                            
+        31 23-JAN-15                                                            
+        42 16-FEB-15                                                            
+        42 17-FEB-15                                                            
+        42 18-FEB-15                                                            
+        42 19-FEB-15                                                            
+        42 20-FEB-15                                                            
+        56 22-MAY-15                                                            
+        56 26-MAY-15                                                            
+
+   NUM_LOS DAY_REQ                                                              
+---------- ---------                                                            
+        56 27-MAY-15                                                            
+        56 28-MAY-15                                                            
+        56 29-MAY-15                                                            
+
+25 rows selected.
+
+60-SQL>
+60-SQL>
+60-SQL>-- ******************************************************
+60-SQL>--    END SESSION
+60-SQL>--
+60-SQL>-- ******************************************************
+60-SQL>
+60-SQL>spool off

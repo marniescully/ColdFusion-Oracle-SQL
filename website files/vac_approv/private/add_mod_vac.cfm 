@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"  xml:lang="en">
+	<head>
+		<title>Modify Vacation Days</title>
+		<link rel="stylesheet" type="text/css" 
+      		href="../css/general.css" />
+	</head>
+	<body>
+		
+		
+			
+		<!-- Main Part of Page -->
+		<div class="container">
+			<div class="main">
+				<div class="float_left">
+					<h2>
+					<cfoutput>#Cookie.firstName#&nbsp;#Cookie.lastName#
+					</cfoutput>
+	          	</h2>
+
+				<p>Employee Type:
+					<cfoutput query="showEmpType">#emp_type#</cfoutput>
+				</p>
+				<p>
+					<cfoutput  query="showDeptShift">#dept#</cfoutput> Department
+				</p>
+				<p><cfoutput query="showDeptShift">#shift#</cfoutput>
+				 Shift
+				</p>
+
+	          	<p># of Vacation Days Available <cfoutput>#Cookie.numVacDays#</cfoutput></p>
+
+	          <p>	Someday you'll be able to modify your vacation dates!</p>
+
+          		</div>
+          		<div class="float_right">
+	          	</div>
+			</div>
+		</div>
+
+		 	<cfinclude template="../includes/sidebar.cfm">
+
+			<cfinclude template="../includes/footer.cfm">
+	</body>
+</html>
